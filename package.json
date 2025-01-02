@@ -1,0 +1,26 @@
+{
+  "name": "planban-plugin",
+  "version": "0.0.3",
+  "description": "提供插件主程序的方法和接口",
+  "types": "index.d.ts",
+  "keywords": [
+    "plugin",
+    "typescript",
+    "interfaces"
+  ],
+  "author": "Nacho.L",
+  "license": "MIT",
+  "peerDependencies": {
+    "wujie": "^1.0.24"
+  },
+  "files": [
+    "index.d.ts",
+    "src"
+  ],
+  "dependencies": {
+    "wujie": "^1.0.24"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.14"
+  }
+}
