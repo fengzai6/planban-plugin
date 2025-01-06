@@ -6,6 +6,13 @@ import { ThrusterApi } from "./src/thruster-api";
 export * from "./src/event-bus";
 
 export interface PlanbanThruster {
+  // 将多语言的设置传入，让插件决定相关处理适配, 可增加枚举？
+  locale: string;
+  // 数据：token、面板设置、用户信息等
+  thrusterData: {
+    token: string;
+  };
+
   initialize: (thrusterName: string, props: InitComponents) => void;
   thrusterApi: ThrusterApi;
 }
