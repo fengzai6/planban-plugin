@@ -1,45 +1,93 @@
-import { EventBus } from "wujie/esm/event";
-import Wujie from "wujie/esm/sandbox";
-import { InitComponents } from "./src/initialize-props";
-import { ThrusterApi } from "./src/thruster-api";
+import { ReactNode } from 'react';
+import Wujie from 'wujie/esm/sandbox';
 
-export * from "./src/event-bus";
-
+export interface IButtonComponent {
+	text: string;
+	icon?: string;
+	callback?: () => void;
+}
+export interface IframeComponent {
+	title: string;
+	url: string;
+}
+export interface IBaseModel {
+	id: string;
+	createdAt: Date;
+	updatedAt?: string;
+}
+export interface IAttachment extends IBaseModel {
+	cardId: string;
+	creatorUserId: string;
+	url: string;
+	name: string;
+	type: string;
+	coverUrl?: string;
+	image?: {
+		width: number;
+		height: number;
+	};
+}
+export interface ITask extends IBaseModel {
+	position: number;
+	name: string;
+	isCompleted: boolean;
+	cardId: string;
+}
+export interface InitComponentsProps {
+	cardButtons?: () => IButtonComponent[];
+	cardAttachments?: (data: IAttachment[]) => ReactNode | IframeComponent;
+}
+export interface ThrusterUtils {
+	popup: (title: string, content?: string, url?: string) => void;
+	modal: (title: string, content?: string, url?: string) => void;
+	resize: (id?: string, element?: HTMLElement, height?: number) => void;
+}
+export type ThrusterApi = {
+	cardAttachments: () => IAttachment[];
+} & ThrusterUtils;
+export declare enum EventType {
+	ATTACHMENTS_UPDATE = "attachmentsUpdate",
+	TASKS_UPDATE = "tasksUpdate"
+}
+export interface EventPayloadMap {
+	[EventType.ATTACHMENTS_UPDATE]: IAttachment[];
+	[EventType.TASKS_UPDATE]: ITask[];
+}
+export interface EventBus {
+	$on<K extends EventType>(event: K, handler: (payload: EventPayloadMap[K]) => void): this;
+	$onAll(fn: (event: EventType, ...args: any[]) => any): this;
+	$once<K extends EventType>(event: K, handler: (payload: EventPayloadMap[K]) => void): void;
+	$off<K extends EventType>(event: K, handler: (payload: EventPayloadMap[K]) => void): this;
+	$offAll(fn: (event: EventType, ...args: any[]) => any): this;
+	$emit<K extends EventType>(event: K, payload: EventPayloadMap[K]): this;
+	$clear(): this;
+}
 export interface PlanbanThruster {
-  // 将多语言的设置传入，让插件决定相关处理适配, 可增加枚举？
-  locale: string;
-  // 数据：token、面板设置、用户信息等
-  thrusterData: {
-    token: string;
-  };
-
-  initialize: (thrusterName: string, props: InitComponents) => void;
-  thrusterApi: ThrusterApi;
+	locale: string;
+	thrusterData: {
+		token: string;
+		data: any;
+	};
+	initialize: (props: InitComponentsProps) => void;
+	thrusterApi: ThrusterApi;
 }
-
 export interface WujieWithThruster {
-  // 是否存在无界
-  __POWERED_BY_WUJIE__?: boolean;
-  // 子应用公共加载路径
-  __WUJIE_PUBLIC_PATH__: string;
-  // 原生的querySelector
-  __WUJIE_RAW_DOCUMENT_QUERY_SELECTOR__: typeof Document.prototype.querySelector;
-  // 原生的querySelectorAll
-  __WUJIE_RAW_DOCUMENT_QUERY_SELECTOR_ALL__: typeof Document.prototype.querySelectorAll;
-  // 原生的window对象
-  __WUJIE_RAW_WINDOW__: Window;
-  // 子应用沙盒实例
-  __WUJIE: typeof Wujie;
-  // 子应用mount函数
-  __WUJIE_MOUNT: () => void;
-  // 子应用unmount函数
-  __WUJIE_UNMOUNT: () => void;
-  // 注入对象
-  // 需要考虑是怎么样将方法传入的
-  $wujie: {
-    bus: EventBus;
-    shadowRoot?: ShadowRoot;
-    props?: { [key: string]: any } & PlanbanThruster;
-    location?: object;
-  };
+	__POWERED_BY_WUJIE__?: boolean;
+	__WUJIE_PUBLIC_PATH__: string;
+	__WUJIE_RAW_DOCUMENT_QUERY_SELECTOR__: typeof Document.prototype.querySelector;
+	__WUJIE_RAW_DOCUMENT_QUERY_SELECTOR_ALL__: typeof Document.prototype.querySelectorAll;
+	__WUJIE_RAW_WINDOW__: Window;
+	__WUJIE: typeof Wujie;
+	__WUJIE_MOUNT: () => void;
+	__WUJIE_UNMOUNT: () => void;
+	$wujie: {
+		bus: EventBus;
+		shadowRoot?: ShadowRoot;
+		props?: {
+			[key: string]: any;
+		} & PlanbanThruster;
+		location?: object;
+	};
 }
+
+export {};
